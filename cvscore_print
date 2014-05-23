@@ -1,0 +1,18 @@
+#! /bin/tcsh
+
+if (-e genome.out) then
+    set cv_tot = `head -1 genome.out`
+    echo $cv_tot | grep -q "e"
+    if ($status == 0) then
+	set cv_first = `echo "$cv_tot" | cut -d "e" -f 1`  
+	set cv_second = `echo "$cv_tot" | cut -d "e" -f 2`
+	set cv_tot = `echo "scale = 8; $cv_first * 10 ^ $cv_second" | bc`
+    endif
+    set nsites = `grep -c "," lat.in`
+    set cv_score = `echo "scale = 8; ( $cv_tot ) / $nsites" | bc`
+    echo CV score from genome.out = $cv_score eV/site
+endif
+
+grep 'Crossvalidation' maps.log
+
+exit 0
